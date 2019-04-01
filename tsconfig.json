@@ -17,6 +17,14 @@
     "lib": [
       "es2018",
       "dom"
-    ]
+    ],
+    "paths": {
+      "tiny-blk": [
+        "dist/tiny-blk"
+      ],
+      "tiny-blk/*": [
+        "dist/tiny-blk/*"
+      ]
+    }
   }
 }
