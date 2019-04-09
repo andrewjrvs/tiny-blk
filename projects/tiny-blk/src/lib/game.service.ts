@@ -31,7 +31,8 @@ export class GameService {
       ArrowRight: ng.playerMove.bind(ng, 1),
       ArrowDown: ng.playerDrop.bind(ng),
       q: ng.playerRotate.bind(ng, -1),
-      w: ng.playerRotate.bind(ng, 1)
+      w: ng.playerRotate.bind(ng, 1),
+      ' ' : ng.pause.bind(ng)
     };
     this.lsnSrv.action.pipe(
       map((act) => actionText[act]),
@@ -41,4 +42,5 @@ export class GameService {
     this.game = ng;
     this.update(0);
   }
+
 }

@@ -5,17 +5,18 @@ export class Board {
     private el;
     private arena;
     private context: CanvasRenderingContext2D ;
-
+    private height = 20;
+    private width = 14;
 
     constructor(
         private canvas: HTMLCanvasElement,
-        private width: number,
-        private height: number,
         private blksrv: BlockService
         ) {
-            this.reset();
+            const scalew = Math.floor(this.canvas.width / this.width);
+            const scaleh = Math.floor(this.canvas.height / this.height);
             this.context = canvas.getContext('2d');
-            this.context.scale(1, 1);
+            this.context.scale(scalew, scaleh);
+            this.reset();
     }
 
     public reset() {
@@ -25,6 +26,17 @@ export class Board {
     public drawBoard(): void {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.draw(this.arena, null, false);
+    }
+
+    public drawPauseScreen() {
+        this.context.font = Math.ceil(this.width * .21428).toString() + 'px Arial';
+        this.context.fillStyle = 'red';
+        this.context.textAlign = 'center';
+        this.context.shadowColor = '#999';
+        this.context.shadowBlur = 20;
+        this.context.shadowOffsetX = 1;
+        this.context.shadowOffsetY = 1;
+        this.context.fillText('Paused', 7, 10);
     }
 
     public draw(shape: number[][], point: {x: number, y: number}, shadow: boolean) {

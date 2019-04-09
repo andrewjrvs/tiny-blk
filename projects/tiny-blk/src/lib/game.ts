@@ -16,6 +16,7 @@ export class Game {
     private lastTime = 0;
     private dropCounter = 0;
     private dropInterval = 1000;
+    private paused = false;
 
     constructor(private canvas: HTMLCanvasElement,
                 private blkSrv: BlockService,
@@ -27,7 +28,7 @@ export class Game {
         this.populatePeiceList();
         this.player.reset();
         this.player.shape = this.newPeiceList.shift();
-        this.player.shape.offset.x = 3;
+        this.player.shape.offset.x = 5;
         this.board.reset();
         this.populatePeiceList();
     }
@@ -37,7 +38,8 @@ export class Game {
     }
 
     public start(): void {
-        this.board = this.brdSrv.new(this.canvas, 12, 20);
+        
+        this.board = this.brdSrv.new(this.canvas);
         this.player = this.plrSrv.new();
         this.player.score$.pipe(
             filter((scr) => scr > this.highScore.value))
@@ -46,6 +48,8 @@ export class Game {
     }
 
     public playerRotate(dir: number): void {
+        if (!this.allowMovement()) return;
+
         let offset = 1;
         const pos = this.player.shape.offset.x;
         this.player.rotate(dir);
@@ -60,7 +64,13 @@ export class Game {
         }// wend
     }
 
+    private allowMovement(): boolean {
+        return !this.paused;
+    }
+
     public playerMove(dir: number) {
+        if (!this.allowMovement()) return;
+
         this.player.move(dir);
         if (this.board.checkForHit(this.player.shape)) {
              this.player.move(-1 * dir);
@@ -68,6 +78,8 @@ export class Game {
     }
 
     public playerDrop(): void {
+        if (!this.allowMovement()) return;
+
         this.player.drop();
         if (this.board.checkForHit(this.player.shape)) {
             this.player.drop(true);
@@ -75,7 +87,7 @@ export class Game {
             this.player.updateScore(this.board.arenaSweep());
             this.player.shape = this.newPeiceList.shift();
 
-            this.player.shape.offset.x = 8;
+            this.player.shape.offset.x = 5;
             this.player.shape.offset.y = 0;
 
             if (this.board.checkForHit(this.player.shape)) {
@@ -88,7 +100,18 @@ export class Game {
         this.dropCounter = 0;
     }
 
+    public pause(paused: boolean = !this.paused) {
+        this.paused = paused;
+        if (this.paused) {
+            this.board.drawPauseScreen();
+        }
+    }
+
     public update(time): void {
+        if (this.paused) {
+            return;
+        }
+
         const deltaTime = time - this.lastTime;
         this.lastTime = time;
 
