@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { GameService } from 'projects/tiny-blk/src/lib/game.service';
+import { GameService } from 'projects/tiny-blk/src/public-api';
 
 @Component({
   selector: 'app-root',
